@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
+import { ActivatedRoute, Router } from '@angular/router';
+//import { GoogleAuthProvider, signInWithPopUp } from 'firebase/auth';
 
 @Component({
   selector: 'app-auth',
@@ -11,10 +14,14 @@ import { CommonModule } from '@angular/common';
 export class AuthComponent implements OnInit {
   isLogin = true;
   authForm!: FormGroup;
+  errorMessage = '';
+  isLoading = false;
+  returnUrl = '/dashboard';
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(private formBuilder: FormBuilder, private authService: AuthService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
     this.initializeForm();
   }
 
@@ -40,20 +47,46 @@ export class AuthComponent implements OnInit {
 
   toggleForm(): void {
     this.isLogin = !this.isLogin;
+    this.errorMessage = '';
     this.initializeForm();
   }
 
   onSubmit(): void {
     if (this.authForm.valid) {
-      console.log('Form data: ', this.authForm.value);
+      this.isLoading = true;
+      this.errorMessage = '';
+
       if (this.isLogin) {
-        alert('Login successful!');
+        this.authService.login(this.authForm.value).subscribe({
+          next: (response) => {
+            console.log('Login successful:', response);
+            this.router.navigate([this.returnUrl]);
+          },
+          error: (error) => {
+            this.errorMessage = error.message;
+            this.isLoading = false;
+          },
+          complete: () => {
+            this.isLoading = false;
+          }
+        });
       } else {
-        alert('Registration successful!');
+        this.authService.register(this.authForm.value).subscribe({
+          next: (response) => {
+            console.log('Registration successful:', response);
+            this.router.navigate([this.returnUrl]);
+          },
+          error: (error) => {
+            this.errorMessage = error.message;
+            this.isLoading = false;
+          },
+          complete: () => {
+            this.isLoading = false;
+          }
+        });
       }
     } else {
       this.markFormGroupTouched(this.authForm);
-      alert('Please fill out the form correctly before submitting.');
     }
   }
 
@@ -65,12 +98,31 @@ export class AuthComponent implements OnInit {
   }
 
   forgotPassword(): void {
-    alert('Password reset link has been sent. Check your email.');
+    const email = this.authForm.get('email')?.value;
+
+    if (!email) {
+      alert('Please enter your email address to reset your password.');
+      return;
+    }
+
+    this.authService.forgotPassword(email).subscribe({
+      next: () => {
+        alert('Password reset instructions have been sent to your email.');
+      },
+      error: (error) => {
+        alert(error.message);
+      }
+    });
   }
 
   socialLogin(provider: string): void {
-    alert(`${provider} login clicked`);
+    console.log(`${provider} login clicked`);
   }
+
+  signInWithGoogle(): void {
+  }
+
+  signInWithFacebook(): void {}
 
   get email() { return this.authForm.get('email'); }
   get password() { return this.authForm.get('password'); }
