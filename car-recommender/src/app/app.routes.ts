@@ -9,20 +9,7 @@ export const routes: Routes = [
         component: AuthComponent
     },
     {
-        path: 'dashboard',
-        component: DashboardComponent,
-        canActivate: [AuthGuard]
-    },
-    {
-        path: 'booking',
-        canActivate: [AuthGuard]
-    },
-    {
-        path: 'admin',
-        canActivate: [AuthGuard]
-    },
-    {
-        path: 'cars',
-        canActivate: [AuthGuard]
+        path: 'auth/login',
+        component: AuthComponent
     }
 ];

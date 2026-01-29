@@ -18,13 +18,13 @@ export class AuthGuard implements CanActivate {
         if (this.authService.isAuthenticated && !this.authService.isTokenExpired()) {
             const requiredRole = route.data['role'];
 
-            if (requiredRole && this.authService.hasRole(requiredRole)) {
-                this.router.navigate(['/unauthorized']);
+            if (requiredRole && !this.authService.hasRole(requiredRole)) {
+                this.router.navigate(['unauthorized']);
                 return false;
             }
             return true;
         }
-        this.router.navigate(['/auth/login'], {
+        this.router.navigate(['auth/login'], {
             queryParams: { returnUrl: state.url }
         });
         return false;
