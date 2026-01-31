@@ -1,6 +1,8 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Navbar } from "../../shared/navbar/navbar";
 
 interface Car {
   id: number;
@@ -35,7 +37,7 @@ interface Stat {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Navbar],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
 })
@@ -151,7 +153,7 @@ export class DashboardComponent implements OnInit {
     }
   ];
 
-  constructor() {}
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
     const today = new Date();
@@ -162,20 +164,11 @@ export class DashboardComponent implements OnInit {
     this.searchForm.returnDate = this.formatDate(tomorrow);
   }
 
-  @HostListener('window:scroll', [])
-  onWindowScroll(): void {
-    this.scrolled = window.pageYOffset > 50;
-  }
-
   formatDate(date: Date): string {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
-  }
-
-  toggleMenu(): void {
-    this.isMenuOpen = !this.isMenuOpen;
   }
 
   onSearch(): void {
@@ -192,11 +185,7 @@ export class DashboardComponent implements OnInit {
     return Array(Math.floor(rating)).fill(0);
   }
 
-  scrollToSection(sectionId: string): void {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-    this.isMenuOpen = false;
+  viewAllVehicles(): void {
+    this.router.navigate(['/car-listing']);
   }
 }

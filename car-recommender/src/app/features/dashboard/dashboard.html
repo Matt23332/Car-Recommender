@@ -1,55 +1,5 @@
 <div class="landing-page">
-    <!--Navigation-->
-    <nav class="navbar" [class.scrolled]="scrolled">
-        <div class="nav-container">
-            <div class="nav-brand">
-                <svg class="brand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
-                </svg>
-                <span class="brand-text">DriveEasy</span>
-            </div>
-
-            <!--Desktop Menu-->
-            <div class="nav-menu desktop-menu">
-                <a (click)="scrollToSection('home')" class="nav-link">Home</a>
-                <a (click)="scrollToSection('cars')" class="nav-link">Cars</a>
-                <a (click)="scrollToSection('features')" class="nav-link">Features</a>
-                <a (click)="scrollToSection('testimonials')" class="nav-link">Testimonials</a>
-                <a (click)="scrollToSection('contact')" class="nav-link">Contact</a>
-            </div>
-
-            <div class="nav-actions">
-                <button class="btn-secondary desktop-btn">Sign In</button>
-                <button class="btn-primary desktop-btn">Get Started</button>
-
-                <!--Mobile Menu Toggle-->
-                <button class="mobile-menu-btn" (click)="toggleMenu()">
-                    <svg *ngIf="!isMenuOpen" class="menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                    <svg *ngIf="isMenuOpen" class="close-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-
-        <!--Mobile Menu-->
-        <div class="mobile-menu" [class.open]="isMenuOpen">
-            <a (click)="scrollToSection('home')" class="mobile-link">Home</a>
-            <a (click)="scrollToSection('cars')" class="mobile-link">Cars</a>
-            <a (click)="scrollToSection('features')" class="mobile-link">Features</a>
-            <a (click)="scrollToSection('testimonials')" class="mobile-link">Testimonials</a>
-            <a (click)="scrollToSection('contact')" class="mobile-link">Contact</a>
-            <div class="mobile-actions">
-                <button class="btn-secondary mobile-btn">Sign In</button>
-                <button class="btn-primary mobile-btn">Get Started</button>
-            </div>
-        </div>
-    </nav>
+    <app-navbar></app-navbar>
 
     <!--Hero Section-->
     <section id="home" class="hero-section">
@@ -214,7 +164,7 @@
             </div>
 
             <div class="view-all">
-                <button class="btn-view-all">
+                <button class="btn-view-all" (click)="viewAllVehicles()">
                     View All Vehicles
                     <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
