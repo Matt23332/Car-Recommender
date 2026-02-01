@@ -1,0 +1,439 @@
+<div class="car-details-page">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading car details...</p>
+  </div>
+
+  <!-- Car Details -->
+  <div *ngIf="!loading && car" class="container">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a routerLink="/dashboard">Home</a>
+      <span class="separator">›</span>
+      <a routerLink="/cars">Cars</a>
+      <span class="separator">›</span>
+      <span class="current">{{ car.make }} {{ car.model }}</span>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="details-layout">
+      <!-- Left Column -->
+      <div class="left-column">
+        <!-- Image Gallery -->
+        <div class="image-gallery">
+          <div class="main-image">
+            <img [src]="car.images[selectedImageIndex]" [alt]="car.make + ' ' + car.model">
+            <button class="nav-btn prev" (click)="previousImage()" [disabled]="selectedImageIndex === 0">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button class="nav-btn next" (click)="nextImage()" [disabled]="selectedImageIndex === car.images.length - 1">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+          <div class="thumbnail-grid">
+            <div *ngFor="let image of car.images; let i = index"
+                 class="thumbnail"
+                 [class.active]="i === selectedImageIndex"
+                 (click)="selectImage(i)">
+              <img [src]="image" [alt]="'Image ' + (i + 1)">
+            </div>
+          </div>
+        </div>
+
+        <!-- Car Header -->
+        <div class="car-header">
+          <div class="header-left">
+            <h1 class="car-title">{{ car.make }} {{ car.model }}</h1>
+            <p class="car-subtitle">{{ car.year }} • {{ car.type | titlecase }}</p>
+            <div class="rating-section">
+              <div class="stars">
+                <svg *ngFor="let star of getStarArray(car.rating)" class="star-icon" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              </div>
+              <span class="rating-text">{{ car.rating }} ({{ car.numberOfRatings }} reviews)</span>
+            </div>
+          </div>
+          <div class="header-right">
+            <div class="price-badge">
+              <span class="price-amount">${{ car.pricePerDay }}</span>
+              <span class="price-period">/day</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+          <button 
+            class="tab"
+            [class.active]="activeTab === 'overview'"
+            (click)="setActiveTab('overview')">
+            Overview
+          </button>
+          <button 
+            class="tab"
+            [class.active]="activeTab === 'specs'"
+            (click)="setActiveTab('specs')">
+            Specifications
+          </button>
+          <button 
+            class="tab"
+            [class.active]="activeTab === 'reviews'"
+            (click)="setActiveTab('reviews')">
+            Reviews ({{ totalReviews }})
+          </button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+          <!-- Overview Tab -->
+          <div *ngIf="activeTab === 'overview'" class="tab-panel">
+            <div class="quick-specs">
+              <div class="spec-card">
+                <svg class="spec-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <div class="spec-info">
+                  <span class="spec-label">Seats</span>
+                  <span class="spec-value">{{ car.seats }}</span>
+                </div>
+              </div>
+              <div class="spec-card">
+                <svg class="spec-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <div class="spec-info">
+                  <span class="spec-label">Transmission</span>
+                  <span class="spec-value">{{ car.transmission | titlecase }}</span>
+                </div>
+              </div>
+              <div class="spec-card">
+                <svg class="spec-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <div class="spec-info">
+                  <span class="spec-label">Fuel Type</span>
+                  <span class="spec-value">{{ car.fuelType | titlecase }}</span>
+                </div>
+              </div>
+              <div class="spec-card">
+                <svg class="spec-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                </svg>
+                <div class="spec-info">
+                  <span class="spec-label">Location</span>
+                  <span class="spec-value">{{ car.location }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="features-section">
+              <h3 class="section-title">Features & Amenities</h3>
+              <div class="features-grid">
+                <div *ngFor="let feature of car.features" class="feature-item">
+                  <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>{{ feature }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Specifications Tab -->
+          <div *ngIf="activeTab === 'specs'" class="tab-panel">
+            <div class="specs-grid">
+              <div class="spec-row">
+                <span class="spec-label">Make</span>
+                <span class="spec-value">{{ car.make }}</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">Model</span>
+                <span class="spec-value">{{ car.model }}</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">Year</span>
+                <span class="spec-value">{{ car.year }}</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">Type</span>
+                <span class="spec-value">{{ car.type | titlecase }}</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">Transmission</span>
+                <span class="spec-value">{{ car.transmission | titlecase }}</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">Fuel Type</span>
+                <span class="spec-value">{{ car.fuelType | titlecase }}</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">Seats</span>
+                <span class="spec-value">{{ car.seats }} Passengers</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">Mileage</span>
+                <span class="spec-value">{{ car.mileage | number }} miles</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">Daily Rate</span>
+                <span class="spec-value">${{ car.pricePerDay }}/day</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">Availability</span>
+                <span class="spec-value">
+                  <span class="badge" [class.available]="car.availability" [class.unavailable]="!car.availability">
+                    {{ car.availability ? 'Available' : 'Unavailable' }}
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reviews Tab -->
+          <div *ngIf="activeTab === 'reviews'" class="tab-panel">
+            <div class="reviews-summary">
+              <div class="summary-left">
+                <div class="average-rating">{{ averageRating.toFixed(1) }}</div>
+                <div class="stars">
+                  <svg *ngFor="let star of getStarArray(averageRating)" class="star-icon" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                </div>
+                <p class="total-reviews">Based on {{ totalReviews }} reviews</p>
+              </div>
+              <div class="summary-right">
+                <div *ngFor="let num of [5, 4, 3, 2, 1]" class="rating-bar">
+                  <span class="rating-label">{{ num }} star</span>
+                  <div class="bar-container">
+                    <div class="bar-fill" [style.width.%]="getRatingDistribution(num)"></div>
+                  </div>
+                  <span class="rating-percent">{{ getRatingDistribution(num).toFixed(0) }}%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="reviews-list">
+              <div *ngFor="let review of reviews" class="review-card">
+                <div class="review-header">
+                  <img [src]="review.userAvatar" [alt]="review.userName" class="review-avatar">
+                  <div class="review-info">
+                    <div class="reviewer-name">
+                      {{ review.userName }}
+                      <span *ngIf="review.verified" class="verified-badge">
+                        <svg fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        Verified
+                      </span>
+                    </div>
+                    <div class="review-meta">
+                      <div class="stars-small">
+                        <svg *ngFor="let star of getStarArray(review.rating)" class="star-icon-small" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      </div>
+                      <span class="review-date">{{ review.date | date:'MMM d, yyyy' }}</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="review-comment">{{ review.comment }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Booking Card -->
+      <div class="right-column">
+        <div class="booking-card">
+          <h3 class="booking-title">Book This Car</h3>
+          
+          <div class="booking-form">
+            <!-- Date Selection -->
+            <div class="form-group">
+              <label class="form-label">Pickup Date</label>
+              <input 
+                type="date" 
+                [(ngModel)]="bookingForm.pickupDate"
+                class="form-input"
+                [min]="bookingForm.pickupDate">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Return Date</label>
+              <input 
+                type="date" 
+                [(ngModel)]="bookingForm.returnDate"
+                class="form-input"
+                [min]="bookingForm.pickupDate">
+            </div>
+
+            <!-- Location Selection -->
+            <div class="form-group">
+              <label class="form-label">Pickup Location</label>
+              <select [(ngModel)]="bookingForm.pickupLocation" class="form-select">
+                <option value="">Select location</option>
+                <option value="Los Angeles Airport">Los Angeles Airport</option>
+                <option value="Los Angeles Downtown">Los Angeles Downtown</option>
+                <option value="Santa Monica">Santa Monica</option>
+                <option value="Beverly Hills">Beverly Hills</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Return Location</label>
+              <select [(ngModel)]="bookingForm.returnLocation" class="form-select">
+                <option value="">Same as pickup</option>
+                <option value="Los Angeles Airport">Los Angeles Airport</option>
+                <option value="Los Angeles Downtown">Los Angeles Downtown</option>
+                <option value="Santa Monica">Santa Monica</option>
+                <option value="Beverly Hills">Beverly Hills</option>
+              </select>
+            </div>
+
+            <!-- Add-ons -->
+            <div class="addons-section">
+              <h4 class="addons-title">Add-ons (Optional)</h4>
+              
+              <label class="addon-item">
+                <input 
+                  type="checkbox" 
+                  [(ngModel)]="bookingForm.addOns.insurance"
+                  class="addon-checkbox">
+                <div class="addon-info">
+                  <span class="addon-name">Full Insurance</span>
+                  <span class="addon-price">${{ addOnPrices.insurance }}/day</span>
+                </div>
+              </label>
+
+              <label class="addon-item">
+                <input 
+                  type="checkbox" 
+                  [(ngModel)]="bookingForm.addOns.gps"
+                  class="addon-checkbox">
+                <div class="addon-info">
+                  <span class="addon-name">GPS Navigation</span>
+                  <span class="addon-price">${{ addOnPrices.gps }}/day</span>
+                </div>
+              </label>
+
+              <label class="addon-item">
+                <input 
+                  type="checkbox" 
+                  [(ngModel)]="bookingForm.addOns.childSeat"
+                  class="addon-checkbox">
+                <div class="addon-info">
+                  <span class="addon-name">Child Seat</span>
+                  <span class="addon-price">${{ addOnPrices.childSeat }}/day</span>
+                </div>
+              </label>
+
+              <label class="addon-item">
+                <input 
+                  type="checkbox" 
+                  [(ngModel)]="bookingForm.addOns.additionalDriver"
+                  class="addon-checkbox">
+                <div class="addon-info">
+                  <span class="addon-name">Additional Driver</span>
+                  <span class="addon-price">${{ addOnPrices.additionalDriver }}/day</span>
+                </div>
+              </label>
+            </div>
+
+            <!-- Price Summary -->
+            <div class="price-summary">
+              <div class="summary-row">
+                <span>Car rental ({{ calculateTotalDays() }} days)</span>
+                <span>${{ car.pricePerDay * calculateTotalDays() }}</span>
+              </div>
+              <div class="summary-row" *ngIf="calculateAddOnsTotal() > 0">
+                <span>Add-ons</span>
+                <span>${{ calculateAddOnsTotal() }}</span>
+              </div>
+              <div class="summary-divider"></div>
+              <div class="summary-row total">
+                <span>Total</span>
+                <span>${{ calculateTotalPrice() }}</span>
+              </div>
+            </div>
+
+            <button (click)="onBookNow()" class="btn-book-now">
+              Book Now
+            </button>
+
+            <div class="booking-notes">
+              <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p>Free cancellation up to 24 hours before pickup</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Card -->
+        <div class="contact-card">
+          <h4 class="contact-title">Need Help?</h4>
+          <p class="contact-description">Our team is here to assist you</p>
+          
+          <div class="contact-methods">
+            <a href="tel:+15551234567" class="contact-method">
+              <svg class="contact-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+              <span>+1 (555) 123-4567</span>
+            </a>
+
+            <a href="mailto:support@driveeasy.com" class="contact-method">
+              <svg class="contact-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              <span>support@driveeasy.com</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Cars -->
+    <div class="related-section">
+      <h2 class="section-heading">You May Also Like</h2>
+      <div class="related-cars-grid">
+        <div *ngFor="let relatedCar of relatedCars" class="related-car-card" (click)="viewRelatedCar(relatedCar.id)">
+          <div class="related-car-image">
+            <img [src]="relatedCar.images[0]" [alt]="relatedCar.make + ' ' + relatedCar.model">
+          </div>
+          <div class="related-car-content">
+            <h3 class="related-car-name">{{ relatedCar.make }} {{ relatedCar.model }}</h3>
+            <p class="related-car-type">{{ relatedCar.type | titlecase }}</p>
+            <div class="related-car-footer">
+              <div class="related-car-rating">
+                <svg class="star-icon-small" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+                <span>{{ relatedCar.rating }}</span>
+              </div>
+              <div class="related-car-price">
+                <span class="price">${{ relatedCar.pricePerDay }}</span>
+                <span class="period">/day</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
