@@ -4,6 +4,7 @@ import { DashboardComponent } from './features/dashboard/dashboard';
 import { AuthGuard } from './core/guards/auth.guard';
 import { CarListingComponent } from './features/cars/car-listing/car-listing';
 import { CarDetailsComponent } from './features/cars/car-details/car-details';
+import { UserDashboardComponent } from './features/user/user';
 
 export const routes: Routes = [
     {
@@ -28,6 +29,11 @@ export const routes: Routes = [
     {
         path: 'cars/:id',
         component: CarDetailsComponent
+        //canActivate: [AuthGuard]
+    },
+    {
+        path: 'user',
+        component: UserDashboardComponent
         //canActivate: [AuthGuard]
     }
 ];
