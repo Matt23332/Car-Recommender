@@ -1,0 +1,519 @@
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.collapsed]="!isSidebarOpen" [class.mobile-open]="isMobileSidebarOpen">
+    <div class="sidebar-header">
+      <div class="sidebar-brand" *ngIf="isSidebarOpen || isMobileSidebarOpen">
+        <svg class="brand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+        </svg>
+        <span class="brand-text">DriveEasy</span>
+      </div>
+      <button class="sidebar-close desktop-hide" (click)="toggleMobileSidebar()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-group-label" *ngIf="isSidebarOpen || isMobileSidebarOpen">Overview</div>
+      <a class="nav-item" [class.active]="activeMenu === 'dashboard'" (click)="setActiveMenu('dashboard')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1m-6 0h6" /></svg>
+        <span *ngIf="isSidebarOpen || isMobileSidebarOpen">Dashboard</span>
+      </a>
+
+      <div class="nav-group-label" *ngIf="isSidebarOpen || isMobileSidebarOpen">Management</div>
+      <a class="nav-item" [class.active]="activeMenu === 'bookings'" (click)="setActiveMenu('bookings')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+        <span *ngIf="isSidebarOpen || isMobileSidebarOpen">Bookings</span>
+        <span class="badge" *ngIf="isSidebarOpen || isMobileSidebarOpen">{{ filteredBookings.length }}</span>
+      </a>
+      <a class="nav-item" [class.active]="activeMenu === 'cars'" (click)="setActiveMenu('cars')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" /></svg>
+        <span *ngIf="isSidebarOpen || isMobileSidebarOpen">Cars</span>
+      </a>
+      <a class="nav-item" [class.active]="activeMenu === 'users'" (click)="setActiveMenu('users')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+        <span *ngIf="isSidebarOpen || isMobileSidebarOpen">Users</span>
+      </a>
+
+      <div class="nav-group-label" *ngIf="isSidebarOpen || isMobileSidebarOpen">System</div>
+      <a class="nav-item" [class.active]="activeMenu === 'settings'" (click)="setActiveMenu('settings')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /></svg>
+        <span *ngIf="isSidebarOpen || isMobileSidebarOpen">Settings</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer" *ngIf="isSidebarOpen || isMobileSidebarOpen">
+      <div class="admin-profile">
+        <img src="https://i.pravatar.cc/150?img=68" alt="Admin" class="admin-avatar">
+        <div class="admin-info">
+          <span class="admin-name">Admin User</span>
+          <span class="admin-role">Super Admin</span>
+        </div>
+      </div>
+      <button class="logout-btn" (click)="logout()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Mobile overlay -->
+  <div class="sidebar-overlay" [class.visible]="isMobileSidebarOpen" (click)="toggleMobileSidebar()"></div>
+
+  <!-- Main Content -->
+  <main class="main-content" [class.sidebar-collapsed]="!isSidebarOpen">
+    <!-- Top Bar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-btn" (click)="toggleMobileSidebar()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+        </button>
+        <button class="collapse-btn desktop-only" (click)="toggleSidebar()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+        </button>
+        <h1 class="page-title">{{ activeMenu | titlecase }}</h1>
+      </div>
+      <div class="topbar-right">
+        <div class="search-box">
+          <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+          <input type="text" placeholder="Search..." class="search-input">
+        </div>
+        <button class="notif-btn">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+          <span class="notif-count">3</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="content-area">
+
+      <!-- ============ DASHBOARD VIEW ============ -->
+      <div *ngIf="activeMenu === 'dashboard'" class="dashboard-view">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <div class="stat-card cars">
+            <div class="stat-icon-wrap"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" /></svg></div>
+            <div class="stat-info">
+              <span class="stat-label">Total Cars </span>
+              <span class="stat-value">{{ stats.totalCars }} </span>
+              <span class="stat-change positive">+{{ stats.carsChange }}% this month</span>
+            </div>
+          </div>
+          <div class="stat-card bookings">
+            <div class="stat-icon-wrap"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg></div>
+            <div class="stat-info">
+              <span class="stat-label">Total Bookings</span>
+              <span class="stat-value">{{ stats.totalBookings }}</span>
+              <span class="stat-change positive">+{{ stats.bookingsChange }}% this month</span>
+            </div>
+          </div>
+          <div class="stat-card users">
+            <div class="stat-icon-wrap"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg></div>
+            <div class="stat-info">
+              <span class="stat-label">Total Users</span>
+              <span class="stat-value">{{ stats.totalUsers }}</span>
+              <span class="stat-change positive">+{{ stats.usersChange }}% this month</span>
+            </div>
+          </div>
+                    <div class="stat-card revenue">
+            <div class="stat-icon-wrap"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+            <div class="stat-info">
+              <span class="stat-label">Total Revenue</span>
+              <span class="stat-value">${{ stats.totalRevenue | number }}</span>
+              <span class="stat-change positive">+{{ stats.revenueChange }}% this month</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="charts-grid">
+          <!-- Revenue Chart -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Monthly Revenue</h3>
+              <span class="chart-badge">Last 6 Months</span>
+            </div>
+            <div class="bar-chart">
+              <div *ngFor="let item of monthlyRevenue" class="bar-group">
+                <div class="bar-wrapper">
+                  <span class="bar-value">${{ item.revenue / 1000 | number }}k</span>
+                  <div class="bar" [style.height.%]="getBarWidth(item.revenue)" [style.background]="'linear-gradient(to top, #3b82f6, #8b5cf6)'"></div>
+                </div>
+                <span class="bar-label">{{ item.month }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bookings by Type -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Bookings by Type</h3>
+              <span class="chart-badge">This Month</span>
+            </div>
+            <div class="donut-chart">
+              <div class="donut-legend">
+                <div *ngFor="let item of bookingsByType" class="legend-item">
+                  <span class="legend-color" [style.background]="item.color"></span>
+                  <span class="legend-label">{{ item.type }}</span>
+                  <span class="legend-value">{{ item.count }}</span>
+                  <span class="legend-percent">({{ (item.count / getTotalBookingsByType() * 100).toFixed(0) }}%)</span>
+                </div>
+              </div>
+              <div class="donut-bars">
+                <div *ngFor="let item of bookingsByType" class="donut-bar-item">
+                  <div class="donut-bar-track">
+                    <div class="donut-bar-fill" [style.width.%]="(item.count / getTotalBookingsByType()) * 100" [style.background]="item.color"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Bookings Table -->
+        <div class="table-card">
+          <div class="table-header">
+            <h3>Recent Bookings</h3>
+            <button class="btn-view-all" (click)="setActiveMenu('bookings')">View All</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Booking ID</th>
+                  <th>Customer</th>
+                  <th>Car</th>
+                  <th>Dates</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let booking of recentBookings">
+                  <td class="booking-id">{{ booking.id }}</td>
+                  <td>
+                    <div class="user-cell">
+                      <img [src]="booking.user.avatar" alt="" class="cell-avatar">
+                      <div>
+                        <span class="cell-name">{{ booking.user.name }}</span>
+                        <span class="cell-sub">{{ booking.user.email }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="car-cell">
+                      <img [src]="booking.car.image" alt="" class="cell-car-img">
+                      <span class="cell-name">{{ booking.car.make }} {{ booking.car.model }}</span>
+                    </div>
+                  </td>
+                  <td class="date-cell">
+                    <span>{{ booking.startDate | date:'MMM d' }}</span>
+                    <span class="date-arrow">→</span>
+                    <span>{{ booking.endDate | date:'MMM d, yyyy' }}</span>
+                  </td>
+                  <td class="amount-cell">${{ booking.totalPrice }}</td>
+                  <td><span class="status-badge" [class]="booking.status">{{ booking.status }}</span></td>
+                  <td><button class="btn-view-detail" (click)="openViewBookingModal(booking)">View</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ BOOKINGS VIEW ============ -->
+      <div *ngIf="activeMenu === 'bookings'" class="bookings-view">
+        <div class="view-header">
+          <h2>All Bookings</h2>
+          <div class="filter-group">
+            <button class="filter-btn" [class.active]="bookingFilter === 'All'" (click)="bookingFilter = 'All'">All</button>
+            <button class="filter-btn" [class.active]="bookingFilter === 'Pending'" (click)="bookingFilter = 'Pending'">Pending</button>
+            <button class="filter-btn" [class.active]="bookingFilter === 'Confirmed'" (click)="bookingFilter = 'Confirmed'">Confirmed</button>
+            <button class="filter-btn" [class.active]="bookingFilter === 'Completed'" (click)="bookingFilter = 'Completed'">Completed</button>
+            <button class="filter-btn" [class.active]="bookingFilter === 'Cancelled'" (click)="bookingFilter = 'Cancelled'">Cancelled</button>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Booking ID</th>
+                  <th>Customer</th>
+                  <th>Car</th>
+                  <th>Dates</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let booking of filteredBookings">
+                  <td class="booking-id">{{ booking.id }}</td>
+                  <td>
+                    <div class="user-cell">
+                      <img [src]="booking.user.avatar" alt="" class="cell-avatar">
+                      <div>
+                        <span class="cell-name">{{ booking.user.name }}</span>
+                        <span class="cell-sub">{{ booking.user.email }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="car-cell">
+                      <img [src]="booking.car.image" alt="" class="cell-car-img">
+                      <span class="cell-name">{{ booking.car.make }} {{ booking.car.model }}</span>
+                    </div>
+                  </td>
+                  <td class="date-cell">
+                    <span>{{ booking.startDate | date:'MMM d' }}</span>
+                    <span class="date-arrow">→</span>
+                    <span>{{ booking.endDate | date:'MMM d, yyyy' }}</span>
+                  </td>
+                  <td class="amount-cell">${{ booking.totalPrice }}</td>
+                  <td><span class="status-badge" [class]="booking.status">{{ booking.status }}</span></td>
+                  <td>
+                    <div class="action-btns">
+                      <button class="btn-view-detail" (click)="openViewBookingModal(booking)">View</button>
+                      <button class="btn-cancel" *ngIf="booking.status === 'Pending' || booking.status === 'Confirmed'" (click)="updateBookingStatus(booking, 'Cancelled')">Cancel</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ CARS VIEW ============ -->
+      <div *ngIf="activeMenu === 'cars'" class="cars-view">
+        <div class="view-header">
+          <h2>Manage Cars</h2>
+          <div class="header-actions">
+            <div class="search-box">
+              <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <input type="text" placeholder="Search cars..." class="search-input" [(ngModel)]="carSearch">
+            </div>
+            <button class="btn-add" (click)="openAddCarModal()">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+              Add Car
+            </button>
+          </div>
+        </div>
+        <div class="cars-grid-admin">
+          <div *ngFor="let car of filteredCars" class="car-card-admin">
+            <div class="car-card-image">
+              <img [src]="car.image" [alt]="car.make">
+              <div class="car-card-status" [class.available]="car.availability" [class.unavailable]="!car.availability">
+                {{ car.availability ? 'Available' : 'Booked' }}
+              </div>
+            </div>
+            <div class="car-card-body">
+              <div class="car-card-header">
+                <h4>{{ car.make }} {{ car.model }}</h4>
+                <span class="car-card-rating">
+                  <svg class="star" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                  {{ car.rating }}
+                </span>
+              </div>
+              <p class="car-card-meta">{{ car.year }} • {{ car.make }}</p>
+              <p class="car-card-price">${{ car.pricePerDay }}<span>/day</span></p>
+              <div class="car-card-actions">
+                <button class="btn-edit" (click)="openEditCarModal(car)">Edit</button>
+                <button class="btn-delete" (click)="deleteCar(car.id)">Delete</button>
+                <button class="btn-toggle" (click)="toggleCarAvailability(car)">
+                  {{ car.availability ? 'Mark Booked' : 'Mark Available' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ USERS VIEW ============ -->
+      <div *ngIf="activeMenu === 'users'" class="users-view">
+        <div class="view-header">
+          <h2>Manage Users</h2>
+          <div class="search-box">
+            <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            <input type="text" placeholder="Search users..." class="search-input" [(ngModel)]="userSearch">
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Role</th>
+                  <th>Bookings</th>
+                  <th>Joined</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let user of filteredUsers">
+                  <td>
+                    <div class="user-cell">
+                      <img [src]="user.avatar" alt="" class="cell-avatar">
+                      <span class="cell-name">{{ user.fullName }}</span>
+                    </div>
+                  </td>
+                  <td class="cell-sub-text">{{ user.email }}</td>
+                  <td class="cell-sub-text">{{ user.phone }}</td>
+                  <td><span class="role-badge" [class]="user.role">{{ user.role }}</span></td>
+                  <td class="text-center">{{ user.totalBookings }}</td>
+                  <td class="cell-sub-text">{{ user.joinedDate | date:'MMM d, yyyy' }}</td>
+                  <td>
+                    <div class="action-btns">
+                      <button class="btn-view-detail">View</button>
+                      <button class="btn-cancel">Ban</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ SETTINGS VIEW ============ -->
+      <div *ngIf="activeMenu === 'settings'" class="settings-view">
+        <h2>Settings</h2>
+        <div class="settings-grid">
+          <div class="settings-card">
+            <h4>General Settings</h4>
+            <div class="form-row">
+              <label>Business Name</label>
+              <input type="text" value="DriveEasy Rentals" class="settings-input">
+            </div>
+            <div class="form-row">
+              <label>Contact Email</label>
+              <input type="email" value="info@driveeasy.com" class="settings-input">
+            </div>
+            <div class="form-row">
+              <label>Contact Phone</label>
+              <input type="tel" value="+1 (555) 123-4567" class="settings-input">
+            </div>
+            <button class="btn-save">Save Changes</button>
+          </div>
+          <div class="settings-card">
+            <h4>Pricing Defaults</h4>
+            <div class="form-row">
+              <label>Insurance (per day)</label>
+              <input type="number" value="15" class="settings-input">
+            </div>
+            <div class="form-row">
+              <label>GPS Navigation (per day)</label>
+              <input type="number" value="10" class="settings-input">
+            </div>
+            <div class="form-row">
+              <label>Child Seat (per day)</label>
+              <input type="number" value="5" class="settings-input">
+            </div>
+            <div class="form-row">
+              <label>Additional Driver (per day)</label>
+              <input type="number" value="20" class="settings-input">
+            </div>
+            <button class="btn-save">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ============ MODALS ============ -->
+<div class="modal-overlay" [class.visible]="showModal" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <!-- View Booking Modal -->
+    <div *ngIf="modalType === 'viewBooking' && selectedBooking">
+      <div class="modal-header">
+        <h3>Booking Details</h3>
+        <button class="modal-close" (click)="closeModal()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-row"><span class="modal-label">Booking ID</span><span class="modal-value">{{ selectedBooking.id }}</span></div>
+        <div class="modal-row"><span class="modal-label">Customer</span><span class="modal-value">{{ selectedBooking.user.name }}</span></div>
+        <div class="modal-row"><span class="modal-label">Email</span><span class="modal-value">{{ selectedBooking.user.email }}</span></div>
+        <div class="modal-row"><span class="modal-label">Car</span><span class="modal-value">{{ selectedBooking.car.make }} {{ selectedBooking.car.model }}</span></div>
+        <div class="modal-row"><span class="modal-label">Start Date</span><span class="modal-value">{{ selectedBooking.startDate | date:'MMMM d, yyyy' }}</span></div>
+        <div class="modal-row"><span class="modal-label">End Date</span><span class="modal-value">{{ selectedBooking.endDate | date:'MMMM d, yyyy' }}</span></div>
+        <div class="modal-row"><span class="modal-label">Total Amount</span><span class="modal-value amount">${{ selectedBooking.totalPrice }}</span></div>
+        <div class="modal-row"><span class="modal-label">Status</span><span class="status-badge" [class]="selectedBooking.status">{{ selectedBooking.status }}</span></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-confirm" *ngIf="selectedBooking.status === 'Pending'" (click)="updateBookingStatus(selectedBooking, 'Confirmed')">Confirm</button>
+        <button class="btn-cancel-modal" *ngIf="selectedBooking.status !== 'Cancelled' && selectedBooking.status !== 'Completed'" (click)="updateBookingStatus(selectedBooking, 'Cancelled')">Cancel Booking</button>
+        <button class="btn-close-modal" (click)="closeModal()">Close</button>
+      </div>
+    </div>
+
+    <!-- Add / Edit Car Modal -->
+    <div *ngIf="modalType === 'addCar' || modalType === 'editCar'">
+      <div class="modal-header">
+        <h3>{{ modalType === 'addCar' ? 'Add New Car' : 'Edit Car' }}</h3>
+        <button class="modal-close" (click)="closeModal()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+  <div class="modal-form-grid">
+    <div class="modal-form-group">
+      <label>Make</label>
+      <input *ngIf="modalType === 'addCar'" type="text" class="modal-input" [(ngModel)]="newCar.make" placeholder="e.g. Porsche">
+      <input *ngIf="modalType === 'editCar'" type="text" class="modal-input" [(ngModel)]="editCarForm.make" placeholder="e.g. Porsche">
+    </div>
+    <div class="modal-form-group">
+      <label>Model</label>
+      <input *ngIf="modalType === 'addCar'" type="text" class="modal-input" [(ngModel)]="newCar.model" placeholder="e.g. Cayenne">
+      <input *ngIf="modalType === 'editCar'" type="text" class="modal-input" [(ngModel)]="editCarForm.model" placeholder="e.g. Cayenne">
+    </div>
+    <div class="modal-form-group">
+      <label>Year</label>
+      <input *ngIf="modalType === 'addCar'" type="number" class="modal-input" [(ngModel)]="newCar.year">
+      <input *ngIf="modalType === 'editCar'" type="number" class="modal-input" [(ngModel)]="editCarForm.year">
+    </div>
+    <div class="modal-form-group">
+      <label>Type</label>
+      <select class="modal-input" *ngIf="modalType === 'addCar'" class="modal-input" [(ngModel)]="newCar.type">
+        <option value="sedan">Sedan</option>
+        <option value="suv">SUV</option>
+        <option value="truck">Truck</option>
+        <option value="sports">Sports</option>
+        <option value="luxury">Luxury</option>
+        <option value="van">Van</option>
+      </select>
+      <select class="modal-input" *ngIf="modalType === 'editCar'" class="modal-input" [(ngModel)]="editCarForm.type">
+        <option value="sedan">Sedan</option>
+        <option value="suv">SUV</option>
+        <option value="truck">Truck</option>
+        <option value="sports">Sports</option>
+        <option value="luxury">Luxury</option>
+        <option value="van">Van</option>
+      </select>
+    </div>
+    <div class="modal-form-group">
+      <label>Price Per Day ($)</label>
+      <input *ngIf="modalType === 'addCar'" type="number" class="modal-input" [(ngModel)]="newCar.pricePerDay" placeholder="89">
+      <input *ngIf="modalType === 'editCar'" type="number" class="modal-input" [(ngModel)]="editCarForm.pricePerDay" placeholder="89">
+    </div>
+    <div class="modal-form-group">
+      <label>Image URL</label>
+      <input *ngIf="modalType === 'addCar'" type="text" class="modal-input" [(ngModel)]="newCar.image" placeholder="http://example.com/car.jpg">
+      <input *ngIf="modalType === 'editCar'" type="text" class="modal-input" [(ngModel)]="editCarForm.image" placeholder="http://example.com/car.jpg">
+    </div>
+  </div>
+</div>
+      <div class="modal-footer">
+        <button class="btn-confirm" (click)="saveCar()">{{ modalType === 'addCar' ? 'Add Car' : 'Save Changes' }}</button>
+        <button class="btn-close-modal" (click)="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

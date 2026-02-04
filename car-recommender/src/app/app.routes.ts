@@ -5,6 +5,7 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { CarListingComponent } from './features/cars/car-listing/car-listing';
 import { CarDetailsComponent } from './features/cars/car-details/car-details';
 import { UserDashboardComponent } from './features/user/user';
+import { AdminDasboardComponent } from './features/admin/admin';
 
 export const routes: Routes = [
     {
@@ -15,6 +16,11 @@ export const routes: Routes = [
     {
         path: 'auth/login',
         component: AuthComponent
+    },
+    {
+        path: 'adminDashboard',
+        component: AdminDasboardComponent
+        //canActivate: [AuthGuard]
     },
     {
         path: 'dashboard',
