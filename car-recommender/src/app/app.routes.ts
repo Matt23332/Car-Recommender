@@ -6,6 +6,7 @@ import { CarListingComponent } from './features/cars/car-listing/car-listing';
 import { CarDetailsComponent } from './features/cars/car-details/car-details';
 import { UserDashboardComponent } from './features/user/user';
 import { AdminDasboardComponent } from './features/admin/admin';
+import { CheckoutPaymentComponent } from './features/checkout-payment/checkout-payment';
 
 export const routes: Routes = [
     {
@@ -40,6 +41,11 @@ export const routes: Routes = [
     {
         path: 'user',
         component: UserDashboardComponent
+        //canActivate: [AuthGuard]
+    },
+    {
+        path: 'checkout-payment',
+        component: CheckoutPaymentComponent
         //canActivate: [AuthGuard]
     }
 ];
