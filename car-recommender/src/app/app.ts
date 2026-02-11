@@ -8,7 +8,7 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterModule, ReactiveFormsModule, CommonModule],
+  imports: [RouterOutlet, RouterModule, ReactiveFormsModule, CommonModule, HttpClientModule],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })

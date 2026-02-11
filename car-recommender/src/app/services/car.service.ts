@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { CarModel, FilterCriteria } from '../models/car.model';
+import { CarModel, FilterCriteria } from '../models/interfaces';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CarService {
-  private readonly API_URL = 'http://localhost:3000/cars';
+  private readonly API_URL = 'http://localhost:5000/api/cars';
 
   private carsSubject = new BehaviorSubject<CarModel[]>([]);
   cars$ = this.carsSubject.asObservable();
@@ -30,7 +30,7 @@ export class CarService {
       if (filters.sortBy) params = params.set('sortBy', filters.sortBy);
     }
 
-    return this.http.get<CarModel[]>(`${this.API_URL}/cars`, { params }).pipe(
+    return this.http.get<CarModel[]>(`${this.API_URL}`, { params }).pipe(
       map(cars => {
         this.carsSubject.next(cars);
         return cars;
@@ -39,11 +39,11 @@ export class CarService {
   }
 
   getCarById(id: string): Observable<CarModel> {
-    return this.http.get<CarModel>(`${this.API_URL}/cars/${id}`);
+    return this.http.get<CarModel>(`${this.API_URL}/${id}`);
   }
 
   getFeaturedCars(): Observable<CarModel[]> {
-    return this.http.get<CarModel[]>(`${this.API_URL}/cars/featured`);
+    return this.http.get<CarModel[]>(`${this.API_URL}/featured`);
   }
 
   getCarTypes(): string[] {

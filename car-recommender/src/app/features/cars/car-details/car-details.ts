@@ -4,8 +4,8 @@ import { Subject, Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
-import { CarModel } from '../../../models/car.model';
-import { CarService } from '../../../services/car.service';
+import { CarModel } from '../../../models/interfaces';
+import { CarBookingService } from '../../../services/car-booking';
 
 interface Review {
   id: string;
@@ -32,6 +32,7 @@ interface BookingForm {
 
 @Component({
   selector: 'app-car-details',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './car-details.html',
   styleUrls: ['./car-details.css'],
@@ -39,6 +40,7 @@ interface BookingForm {
 export class CarDetailsComponent implements OnInit, OnDestroy {
   car: CarModel | null = null;
   loading = true;
+  errorMessage = '';
   selectedImageIndex = 0;
   activeTab: 'overview' | 'specs' | 'reviews' = 'overview';
 
@@ -70,12 +72,12 @@ export class CarDetailsComponent implements OnInit, OnDestroy {
 
   relatedCars: CarModel[] = [];
 
-  constructor(private route: ActivatedRoute, private carService: CarService, private router: Router) {}
+  constructor(private route: ActivatedRoute, private carService: CarBookingService, private router: Router) {}
 
   ngOnInit(): void {
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe(params => {
-      const carId = params['id'];
-      this.loadCarDetails(carId);
+      const id = params['id'];
+      this.loadCar(id);
     });
 
     const today = new Date();
@@ -91,28 +93,22 @@ export class CarDetailsComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  loadCarDetails(carId: string): void {
+  loadCar(id: string): void {
     this.loading = true;
 
-    setTimeout(() => {
-      this.car = this.getMockCar(carId);
-      this.reviews = this.getMockReviews();
-      this.relatedCars = this.getMockRelatedCars();
-      this.calculateRating();
-      this.loading = false;
-    }, 500);
-
-    /* Actual API looks something like this:
-    this.carService.getCarById(carId).subscribe({
-      next: (car) => {
-        this.car = car;
+    this.carService.getCar(id).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.car = response.data;
+        }
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading car details', error);
+        console.error(error);
+        this.errorMessage = 'Failed to load car details.';
         this.loading = false;
       }
-    });*/
+    });
   }
 
   selectImage(index: number): void {
@@ -199,15 +195,11 @@ export class CarDetailsComponent implements OnInit, OnDestroy {
 
     this.router.navigate(['/booking/summary'], {
       queryParams: {
-        carId: this.car.id,
+        ...this.bookingForm.addOns,
         pickupDate: this.bookingForm.pickupDate,
         returnDate: this.bookingForm.returnDate,
         pickupLocation: this.bookingForm.pickupLocation,
-        returnLocation: this.bookingForm.returnLocation,
-        insurance: this.bookingForm.addOns.insurance,
-        gps: this.bookingForm.addOns.gps,
-        childSeat: this.bookingForm.addOns.childSeat,
-        additionalDriver: this.bookingForm.addOns.additionalDriver
+        returnLocation: this.bookingForm.returnLocation
       }
     });
   }

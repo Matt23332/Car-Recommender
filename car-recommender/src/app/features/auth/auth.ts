@@ -14,6 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class AuthComponent implements OnInit {
   isLogin = true;
   authForm!: FormGroup;
+  message = '';
   errorMessage = '';
   isLoading = false;
   returnUrl = '/dashboard';
@@ -60,6 +61,7 @@ export class AuthComponent implements OnInit {
         this.authService.login(this.authForm.value).subscribe({
           next: (response) => {
             console.log('Login successful:', response);
+            this.message = 'Login successful!';
             this.router.navigate([this.returnUrl]);
           },
           error: (error) => {
@@ -70,11 +72,12 @@ export class AuthComponent implements OnInit {
             this.isLoading = false;
           }
         });
-      } else {
+      } else if (!this.isLogin) {
         this.authService.register(this.authForm.value).subscribe({
           next: (response) => {
             console.log('Registration successful:', response);
-            this.router.navigate([this.returnUrl]);
+            this.message = 'Registration successful! Please log in.';
+            this.router.navigate(['auth/login']);
           },
           error: (error) => {
             this.errorMessage = error.message;

@@ -3,14 +3,13 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { UserModel } from '../models/user.model';
-import { LoginRequest, RegisterRequest, AuthResponse, TokenPayload } from '../models/auth.model';
+import { UserModel, LoginRequest, RegisterRequest, AuthResponse, TokenPayload } from '../models/interfaces';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly API_URL = '';
+  private readonly API_URL = 'http://localhost:5000/api/auth';
   private readonly TOKEN_KEY = 'auth_token';
   private readonly REFRESH_TOKEN_KEY = 'refresh_token';
   private readonly USER_KEY = 'current_user';
@@ -33,7 +32,7 @@ export class AuthService {
   login(credentials: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.API_URL}/login`, credentials).pipe(
       tap(response => this.handleAuthSuccess(response)),
-      catchError(this.handleError)
+      catchError(this.handleError),
     );
   }
 
@@ -45,11 +44,15 @@ export class AuthService {
   }
 
   logout(): void {
-    this.http.post(`${this.API_URL}/logout`, {}).subscribe();
+    // this.http.post(`${this.API_URL}/logout`, {}).subscribe({
+    //   next: () => {},
+    //   error: (error) => {}
+    // });
     this.clearAuthData();
     this.currentUserSubject.next(null);
     this.isAuthenticatedSubject.next(false);
-    this.router.navigate(['/auth']);
+    this.router.navigate(['auth/login']);
+    console.log('User logged out');
   }
 
   refreshToken(): Observable<AuthResponse> {
@@ -203,9 +206,9 @@ export class AuthService {
         case 404:
           errorMessage = 'Not Found. The requested resource could not be found.';
           break;
-        case 500:
-          errorMessage = 'Internal Server Error. Please try again later.';
-          break;
+        // case 500:
+        //   errorMessage = 'Internal Server Error. Please try again later.';
+        //   break;
         default:
           errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
       }
