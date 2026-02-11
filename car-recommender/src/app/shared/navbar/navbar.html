@@ -19,8 +19,12 @@
         </div>
 
         <div class="nav-actions">
-            <button class="btn-secondary desktop-btn" (click)="getStarted()">Sign In</button>
-            <button class="btn-primary desktop-btn" (click)="getStarted()">Get Started</button>
+            <button *ngIf="!(authService.isAuthenticated$ | async)" class="btn-secondary desktop-btn" (click)="getStarted()">Sign In</button>
+            <button *ngIf="!(authService.isAuthenticated$ | async)" class="btn-primary desktop-btn" (click)="getStarted()">Get Started</button>
+            <div *ngIf="authService.currentUser$ | async as user" class="user-section">
+                <span class="welcome-text">Welcome, {{ user.fullName }} </span>
+                <button class="btn-secondary desktop-btn" (click)="authService.logout()">Logout</button>
+            </div>
 
             <!--Mobile Menu Toggle-->
             <button class="mobile-menu-btn" (click)="toggleMenu()">
@@ -42,8 +46,10 @@
         <a (click)="scrollToSection('testimonials')" class="mobile-link">Testimonials</a>
         <a (click)="scrollToSection('contact')" class="mobile-link">Contact</a>
         <div class="mobile-actions">
-            <button class="btn-secondary mobile-btn" (click)="getStarted()">Sign In</button>
-            <button class="btn-primary mobile-btn" (click)="getStarted()">Get Started</button>
+            <button *ngIf="!(authService.isAuthenticated$ | async)" class="btn-secondary mobile-btn" (click)="getStarted()">Sign In</button>
+            <button *ngIf="!(authService.isAuthenticated$ | async)" class="btn-primary mobile-btn" (click)="getStarted()">Get Started</button>
+            <div *ngIf="authService.currentUser$ | async as user" class="mobile-user">Welcome, {{ user.fullName }}</div>
+            <button *ngIf="authService.isAuthenticated$ | async" class="btn-secondary mobile-btn" (click)="authService.logout()">Logout</button>
         </div>
     </div>
 </nav>

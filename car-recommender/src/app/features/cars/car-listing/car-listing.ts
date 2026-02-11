@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
-import { CarModel, FilterCriteria } from '../../../models/car.model';
-import { CarService } from '../../../services/car.service';
+import { CarModel, FilterCriteria } from '../../../models/interfaces';
+import { CarBookingService } from '../../../services/car-booking';
 import { Navbar } from "../../../shared/navbar/navbar";
 
 @Component({
@@ -53,7 +53,7 @@ export class CarListingComponent implements OnInit, OnDestroy {
   itemsPerPage = 9;
   totalPages = 0;
 
-  constructor(private route: ActivatedRoute, private router: Router, private carService: CarService) {}
+  constructor(private route: ActivatedRoute, private router: Router, private carService: CarBookingService) {}
 
   ngOnInit(): void {
     this.locations = this.carService.getLocations();
